@@ -11,11 +11,14 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const rename = require('gulp-rename');
+const webserver = require('gulp-webserver');
 
 // Source directory
 const srcDir = './src';
 // Distribution directory
 const distDir = './dist';
+// Port for the development server
+const port = 4200;
 
 /*
  Gulp task to convert sass to vanills css
@@ -70,10 +73,19 @@ gulp.task('watch', () => {
     gulp.watch(`${srcDir}/js/**/*.js`, ['js']);        
 });
 
+gulp.task('webserver', () => {
+    gulp.src(`${distDir}`)
+        .pipe(webserver({
+            port: port,
+            livereload: true,
+            open: true
+        }));
+});
+
 /*
 Gulp task to build the src directory to dist directory
 */
-gulp.task('serve', ['sass', 'imagemin', 'js', 'html', 'watch']);
+gulp.task('serve', ['sass', 'imagemin', 'js', 'html', 'watch', 'webserver']);
 
 /*
 Gulp default task
