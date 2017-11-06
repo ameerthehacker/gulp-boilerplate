@@ -11,8 +11,13 @@ It also makes your life easy by minifying images, css, js.
 git clone https://github.com/ameerthehacker/gulp-boilerplate.git
 ```
 
+### 2. Install required dependencies
 
-### 2. Run the dev server
+```
+npm install
+```
+
+### 3. Run the dev server
 
 ```
 npm start
