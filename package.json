@@ -4,7 +4,7 @@
   "description": "It is a boilerplate app with common gulp taks like sass, minification of images, js etc.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp"
   },
   "keywords": [
     "gulp"
