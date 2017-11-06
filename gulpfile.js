@@ -12,6 +12,7 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const rename = require('gulp-rename');
 const webserver = require('gulp-webserver');
+const colors = require('colors');
 
 // Source directory
 const srcDir = './src';
@@ -21,11 +22,18 @@ const distDir = './dist';
 const port = 4200;
 
 /*
+ Function to handle error while transforms in scss, js
+*/
+function handleError(error) {
+    console.log(colors.red(error.toString()));
+}
+
+/*
  Gulp task to convert sass to vanills css
 */
 gulp.task('sass', () => {
     gulp.src(`${srcDir}/sass/**/*.scss`)
-        .pipe(sass())
+        .pipe(sass()).on('error', handleError)
         .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
         .pipe(concat('bundle.min.css'))        
         .pipe(minifyCSS())
@@ -37,7 +45,7 @@ gulp.task('sass', () => {
 */
 gulp.task('imagemin', () => {
     gulp.src([`${srcDir}/images/**/*.png`, `${srcDir}/images/**/*.jpg`, `${srcDir}/images/**/*.jpeg`])
-        .pipe(imagemin())
+        .pipe(imagemin()).on('error', handleError)
         .pipe(gulp.dest(`${distDir}/images`));
 });
 
@@ -46,7 +54,7 @@ gulp.task('imagemin', () => {
 */
 gulp.task('js', () => {
     browserify({ entries: `${srcDir}/js/app.js`, debug: true }).transform('babelify')
-        .bundle()
+        .bundle().on('error', handleError)
         .pipe(source('app.js'))
         .pipe(buffer())
         .pipe(uglify())
@@ -59,7 +67,7 @@ gulp.task('js', () => {
 */
 gulp.task('html', () => {
     gulp.src(`${srcDir}/**/*.html`)
-        .pipe(htmlmin({ collapseBooleanAttributes: true, collapseWhitespace: true }))
+        .pipe(htmlmin({ collapseBooleanAttributes: true, collapseWhitespace: true })).on('error', handleError)
         .pipe(gulp.dest(distDir));
 });
 
