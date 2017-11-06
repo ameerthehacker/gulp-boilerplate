@@ -5,6 +5,12 @@ const minifyCSS = require('gulp-minify-css');
 const concat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
 const htmlmin = require('gulp-htmlmin');
+const babelify = require('babelify');
+const uglify = require('gulp-uglify');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const rename = require('gulp-rename');
 
 // Source directory
 const srcDir = './src';
@@ -18,8 +24,8 @@ gulp.task('sass', () => {
     gulp.src(`${srcDir}/sass/**/*.scss`)
         .pipe(sass())
         .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
+        .pipe(concat('bundle.min.css'))        
         .pipe(minifyCSS())
-        .pipe(concat('bundle.min.css'))
         .pipe(gulp.dest(distDir));
 });
 
@@ -30,6 +36,19 @@ gulp.task('imagemin', () => {
     gulp.src([`${srcDir}/images/**/*.png`, `${srcDir}/images/**/*.jpg`, `${srcDir}/images/**/*.jpeg`])
         .pipe(imagemin())
         .pipe(gulp.dest(`${distDir}/images`));
+});
+
+/*
+ Gulp task to convert ES2015 to vanilla js
+*/
+gulp.task('js', () => {
+    browserify({ entries: `${srcDir}/js/app.js`, debug: true }).transform('babelify')
+        .bundle()
+        .pipe(source('app.js'))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(rename('bundle.min.js'))
+        .pipe(gulp.dest(distDir));
 });
 
 /*
@@ -47,5 +66,16 @@ Gulp task to watch the changes in the src directory
 gulp.task('watch', () => {
     gulp.watch(`${srcDir}/sass/*.scss`, ['sass']);
     gulp.watch([`${srcDir}/images/**/*.png`, `${srcDir}/images/**/*.jpg`, `${srcDir}/images/**/*.jpeg`], ['imagemin']);   
-    gulp.watch(`${srcDir}/**/*.html`, ['html']);    
+    gulp.watch(`${srcDir}/**/*.html`, ['html']);  
+    gulp.watch(`${srcDir}/js/**/*.js`, ['js']);        
 });
+
+/*
+Gulp task to build the src directory to dist directory
+*/
+gulp.task('serve', ['sass', 'imagemin', 'js', 'html', 'watch']);
+
+/*
+Gulp default task
+*/
+gulp.task('default', ['serve'])
