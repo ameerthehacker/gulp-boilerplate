@@ -4,6 +4,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const minifyCSS = require('gulp-minify-css');
 const concat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
+const htmlmin = require('gulp-htmlmin');
 
 // Source directory
 const srcDir = './src';
@@ -32,9 +33,19 @@ gulp.task('imagemin', () => {
 });
 
 /*
+ Gulp task to minify all html files and copy them to dist directory
+*/
+gulp.task('html', () => {
+    gulp.src(`${srcDir}/**/*.html`)
+        .pipe(htmlmin({ collapseBooleanAttributes: true, collapseWhitespace: true }))
+        .pipe(gulp.dest(distDir));
+});
+
+/*
 Gulp task to watch the changes in the src directory
 */
 gulp.task('watch', () => {
     gulp.watch(`${srcDir}/sass/*.scss`, ['sass']);
-    gulp.watch([`${srcDir}/images/**/*.png`, `${srcDir}/images/**/*.jpg`, `${srcDir}/images/**/*.jpeg`], ['imagemin']);    
+    gulp.watch([`${srcDir}/images/**/*.png`, `${srcDir}/images/**/*.jpg`, `${srcDir}/images/**/*.jpeg`], ['imagemin']);   
+    gulp.watch(`${srcDir}/**/*.html`, ['html']);    
 });
