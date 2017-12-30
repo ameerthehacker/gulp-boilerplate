@@ -32,7 +32,7 @@ function handleError(error) {
  Gulp task to convert sass to vanills css
 */
 gulp.task('sass', () => {
-    gulp.src(`${srcDir}/sass/**/*.scss`)
+    gulp.src([`${srcDir}/sass/**/*.scss`, `${srcDir}/sass/**/*.css`])
         .pipe(sass()).on('error', handleError)
         .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
         .pipe(concat('bundle.min.css'))        
